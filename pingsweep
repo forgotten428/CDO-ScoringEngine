@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#Ping Sweep
+for ips in {101..106}; do (ping 192.168.69.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		points=5;
+		current=$(cat team$ips);
+		echo "Team "$ips" earned "$points" points";
+		expr $current + $points > /tmp/team$ips;
+	else
+		echo "Team "$ips" metasploit interface is down";
+	fi
+done
