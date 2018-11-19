@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#Web Sweep
+for ips in {101..106}; do (curl --silent --output /dev/null 192.168.69.$ips)
+	if [ $? -eq 0 ]
+	then
+		content=$(curl 192.168.69.$ips | awk -F '#' '{print $2}')
+		#echo $content
+		if [ $content -eq $ips ]
+		then
+		points=10;
+		current=$(cat /var/www/html/teams/team$ips);
+		#echo "Team "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/team$ips
+		fi
+	else
+		echo "Team "$ips" metasploit web content is down";
+	fi
+done

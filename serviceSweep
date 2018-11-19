@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#Service Connectivity
+for ips in {101..106}; do (ping 192.168.69.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		echo "Interface is UP, nice job!">/var/www/html/teams/teamservice$ips;
+	else
+		echo "Interace is DOWN, check /etc/network/interfaces  |">/var/www/html/teams/teamservice$ips;
+		echo " |  Possibly try /etc/init.d/networking restart  |">>/var/www/html/teams/teamservice$ips;
+	fi
+done
+#Service Web Server
+for ips in {101..106}; do (curl --silent --output /dev/null 192.168.69.$ips)
+        if [ $? -eq 0 ]
+        then
+                echo " | Apache2 service is UP, nice job!">>/var/www/html/teams/teamservice$ips;
+        else
+                echo " | Apache2 service is DOWN, check /var/www/ |">>/var/www/html/teams/teamservice$ips;
+                echo " | Possibly try /etc/init.d/apache2 restart |">>/var/www/html/teams/teamservice$ips;
+        fi
+done
+#Web Content Check
+for ips in {101..106}; do (curl --silent --output /dev/null 192.168.69.$ips)
+        if [ $? -eq 0 ]
+        then
+		content=$(curl 192.168.69.$ips | awk -F '#' '{print $2}')
+                #echo $content
+                if [ $content -eq $ips ]
+                then
+                	echo " | Web Content is UP, nice job!">>/var/www/html/teams/teamservice$ips;
+		else
+			echo "IF YOU SEE THIS TELL ANDREW!" >>/var/www/html/teams/teamservice$ips;
+		fi
+	else
+		echo " | Web Content is DOWN, check /var/www/index.html |">>/var/www/html/teams/teamservice$ips;
+		echo " | Possibly add #"$ips" to your index!">>/var/www/html/teams/teamservice$ips;
+	fi
+done
+
