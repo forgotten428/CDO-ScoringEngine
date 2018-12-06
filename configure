@@ -1,11 +1,19 @@
 #!/bin/bash
 #write out current crontab
 #add functionality to check if no crontab then print No crontab found instead"
+# Declare Variables
+wait[0]="-"
+wait[1]="\\"
+wait[2]="|"
+wait[3]="/"
+
+
 crontab -l > mycron 
 
 #Check for scoring engine
 echo "Searching for scoring engine please wait"
 echo ""
+echo ${wait[0]}
 path=$(find / -name "CDO-ScoringEngine" 2>&1| grep -v "Permission denied" | awk -F "find:" '{print $1}' )
 clear 
 
@@ -31,8 +39,15 @@ then
 else
 	echo "Bye"
 fi
-clear
-echo "Added to crontab"
+
+if [ $correct == "y" ]
+then
+	clear
+	echo "Added to crontab"
+else
+	echo "Nothing added to crontab"
+fi
+	
 echo ""
 echo "Do you want to add web-gui to apache?" 
 echo ""
@@ -44,6 +59,7 @@ read gui
 if [ $gui == "y" ] 
 then
 	echo "Copying web files to apache server"
+	echo "done"
 	sudo cp $path/web/score.php /var/www/html/score.php
 	sudo cp $path/web/services.php /var/www/html/services.php 
 else
