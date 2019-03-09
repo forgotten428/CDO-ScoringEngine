@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#Web Sweep LAN
+for ips in {0,25}; do (curl --silent --output /dev/null 10.0.0.$ips)
+	if [ $? -eq 0 ]
+	then
+		content=$(curl 10.0.0.$ips | awk -F '#' '{print $2}')
+		#echo $content
+		if [ $content -eq $ips ]
+		then
+		points=10;
+		current=$(cat /var/www/html/teams/LAN/$ips);
+		#echo "Team "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/LAN/$ips
+		fi
+	else
+		echo "Team "$ips" metasploit web content is down";
+	fi
+done
+
+#Web Sweep DMZ
+for ips in {6,13}; do (curl --silent --output /dev/null 172.16.1.$ips)
+	if [ $? -eq 0 ]
+	then
+		content=$(curl 172.16.1.$ips | awk -F '#' '{print $2}')
+		#echo $content
+		if [ $content -eq $ips ]
+		then
+		points=10;
+		current=$(cat /var/www/html/teams/DMZ/$ips);
+		#echo "Team "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/DMZ/$ips
+		fi
+	else
+		echo "Team "$ips" metasploit web content is down";
+	fi
+done

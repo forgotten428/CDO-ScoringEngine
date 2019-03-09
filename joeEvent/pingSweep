@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Ping Sweep LAN
+for ips in {1,17,25,27,30}; do (ping 10.0.0.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		points=5;
+		current=$(cat /var/www/html/teams/LAN/$ips);
+		echo "LAN VM "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/LAN/$ips;
+	else
+		echo "LAN VM "$ips" interface is down";
+		expr $current > /var/www/html/teams/LAN/$ips;
+	fi
+done
+
+#Ping Sweep DMZ
+for ips in {5,6,10,13}; do (ping 172.16.1.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		points=5;
+		current=$(cat /var/www/html/teams/DMZ/$ips);
+		echo "DMZ VM "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/DMZ/$ips;
+	else
+		echo "DMZ VM "$ips" interface is down";
+		expr $current > /var/www/html/teams/DMZ/$ips;
+	fi
+done

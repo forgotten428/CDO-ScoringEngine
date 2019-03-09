@@ -1,0 +1,12 @@
+Interface is UP, nice job!
+ | Web service is DOWN, check /var/www/ |
+ | Possibly try /etc/init.d/apache2 restart |
+ | Web Content is DOWN, check /var/www/index.html |
+ | Web service is DOWN, check /var/www/ |
+ | Possibly try /etc/init.d/apache2 restart |
+ | Web Content is DOWN, check /var/www/index.html |
+ | Web service is DOWN, check /var/www/ |
+ | Possibly try /etc/init.d/apache2 restart |
+ | Web Content is DOWN, check /var/www/index.html |
+ | Web Content is DOWN, check /var/www/index.html |
+ | Web Content is DOWN, check /var/www/index.html |

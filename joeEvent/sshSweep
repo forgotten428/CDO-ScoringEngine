@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#Web Sweep LAN
+for ips in {0,25}; do (ssh -q blackteam@$ips -i /root/blackteam)
+	if [ $? -eq 0 ]
+	then
+		points=5;
+		current=$(cat /var/www/html/teams/LAN/$ips);
+		echo "LAN VM "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/LAN/$ips
+		#fi
+	else
+		echo "LAN VM "$ips" web is down";
+	fi
+done
+
+#Web Sweep DMZ
+for ips in {6,13}; do (curl --silent --output /dev/null 172.16.1.$ips)
+	if [ $? -eq 0 ]
+	then
+		#content=$(awk -F '#' '{print $2}')
+		#echo $content
+		#if [ $content -eq $ips ]
+		#then
+		points=5;
+		current=$(cat /var/www/html/teams/DMZ/$ips);
+		echo "DMZ VM "$ips" earned "$points" points";
+		expr $current + $points > /var/www/html/teams/DMZ/$ips
+		#fi
+	else
+		echo "DMZ VM "$ips" web is down";
+	fi
+done

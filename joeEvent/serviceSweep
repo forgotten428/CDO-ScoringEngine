@@ -1,0 +1,79 @@
+#!/bin/bash
+
+#Service Connectivity LAN
+for ips in {1,17,25,27,30}; do (ping 10.0.0.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		echo "Interface is UP, nice job!">/var/www/html/teams/LAN/services/$ips;
+	else
+		echo "Interace is DOWN, check /etc/network/interfaces  |">/var/www/html/teams/LAN/services/$ips;
+		echo " |  Possibly try /etc/init.d/networking restart  |">>/var/www/html/teams/LAN/services/$ips;
+	fi
+done
+
+#Service Connectivity DMZ
+for ips in {5,6,10,13}; do (ping 172.16.1.$ips -c 1 >/dev/null)
+	if [ $? -eq 0 ]
+	then
+		echo "Interface is UP, nice job!">/var/www/html/teams/DMZ/services/$ips;
+	else
+		echo "Interace is DOWN, check /etc/network/interfaces  |">/var/www/html/teams/DMZ/services/$ips;
+		echo " |  Possibly try /etc/init.d/networking restart  |">>/var/www/html/teams/DMZ/services/$ips;
+	fi
+done
+#Service Web Server LAN
+for ips in {17,25}; do (curl --silent --output /dev/null 10.0.0.$ips)
+        if [ $? -eq 0 ]
+        then
+                echo " | Web service is UP, nice job!">>/var/www/html/teams/LAN/services/$ips;
+        else
+                echo " | Web service is DOWN, check /var/www/ |">>/var/www/html/teams/LAN/services/$ips;
+                echo " | Possibly try /etc/init.d/apache2 restart |">>/var/www/html/teams/LAN/services/$ips;
+        fi
+done
+#Web Content Check LAN
+for ips in {17,25}; do (curl --silent --output /dev/null 10.0.0.$ips)
+        if [ $? -eq 0 ]
+        then
+		content=$(curl 10.0.0.$ips | awk -F '#' '{print $2}')
+                #echo $content
+                if [ $content -eq $ips ]
+                then
+                	echo " | Web Content is UP, nice job!">>/var/www/html/teams/LAN/services/$ips;
+		else
+			echo "IF YOU SEE THIS TELL ANDREW!" >>/var/www/html/teams/LAN/services/$ips;
+		fi
+	else
+		echo " | Web Content is DOWN, check /var/www/index.html |">>/var/www/html/teams/LAN/services/$ips;
+		#echo " | Possibly add #"$ips" to your index!">>/var/www/html/teams/LAN/services/$ips;
+	fi
+done
+
+#Service Web Server DMZ
+for ips in {6,13}; do (curl --silent --output /dev/null 172.16.1.$ips)
+        if [ $? -eq 0 ]
+        then
+                echo " | Web service is UP, nice job!">>/var/www/html/teams/DMZ/services/$ips;
+        else
+                echo " | Web service is DOWN, check /var/www/ |">>/var/www/html/teams/DMZ/services/$ips;
+                echo " | Possibly try /etc/init.d/apache2 restart |">>/var/www/html/teams/DMZ/services/$ips;
+        fi
+done
+#Web Content Check
+for ips in {6,13}; do (curl --silent --output /dev/null 172.16.1.$ips)
+        if [ $? -eq 0 ]
+        then
+		content=$(curl 172.16.1.$ips | awk -F '#' '{print $2}')
+                #echo $content
+                if [ $content -eq $ips ]
+                then
+                	echo " | Web Content is UP, nice job!">>/var/www/html/teams/DMZ/services/$ips;
+		else
+			echo "IF YOU SEE THIS TELL ANDREW!" >>/var/www/html/teams/DMZ/services/$ips;
+		fi
+	else
+		echo " | Web Content is DOWN, check /var/www/index.html |">>/var/www/html/teams/DMZ/services/$ips;
+		echo " | Possibly add #"$ips" to your index!">>/var/www/html/teams/DMZ/services/$ips;
+	fi
+done
+
